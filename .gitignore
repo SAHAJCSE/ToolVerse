@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.env
+**/.env
+.env.*
+**/.env.*
+!.env.example
+**/.env.example
+.vercel
+**/.vercel
+.DS_Store
+Thumbs.db
