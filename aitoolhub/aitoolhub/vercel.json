@@ -1,0 +1,8 @@
+{
+  "crons": [
+    { "path": "/api/cron/discover-tools", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/daily-newsletter", "schedule": "30 2 * * *" }
+  ],
+  "functions": { "api/**/*.js": { "maxDuration": 60 } },
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+}
