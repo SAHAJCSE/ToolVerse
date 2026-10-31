@@ -34,6 +34,23 @@ function Reviews({ tool, toast }) {
 }
 
 export default function ToolPage() {
+  // ----- Gemini integration state -----
+  const [gemPrompt, setGemPrompt] = useState('')
+  const [gemAnswer, setGemAnswer] = useState('')
+  const [gemLoading, setGemLoading] = useState(false)
+  const handleAskGemini = async () => {
+    if (!gemPrompt.trim()) return
+    setGemLoading(true)
+    try {
+      const answer = await callGemini(gemPrompt, { temperature: 0.7, maxOutputTokens: 512 })
+      setGemAnswer(answer)
+    } catch (e) {
+      toast(e.message ?? 'Gemini request failed')
+    } finally {
+      setGemLoading(false)
+    }
+  }
+
   const { slug } = useParams()
   const nav = useNavigate()
   const { session } = useAuth()
@@ -91,6 +108,31 @@ export default function ToolPage() {
           {tool.cons?.length > 0 && <><h2 className="h3">Cons</h2>{list(tool.cons)}</>}
           {tool.screenshots?.length > 0 && <div className="shots">{tool.screenshots.map((s) => <img key={s} src={s} alt={`${tool.name} screenshot`} loading="lazy" referrerPolicy="no-referrer" />)}</div>}
           <Reviews tool={tool} toast={toast} />
+{/* Gemini AI assistant */}
+<section className="gemini-section" style={{ marginTop: '24px' }}>
+  <h2 className="h3">Ask Gemini</h2>
+  <textarea
+    className="field"
+    rows={3}
+    placeholder="Enter a question about this tool..."
+    value={gemPrompt}
+    onChange={e => setGemPrompt(e.target.value)}
+  />
+  <button
+    className="btn"
+    disabled={gemLoading || !gemPrompt.trim()}
+    onClick={handleAskGemini}
+    style={{ marginTop: '8px' }}
+  >
+    {gemLoading ? 'Thinking…' : 'Ask Gemini'}
+  </button>
+  {gemAnswer && (
+    <div className="mt-4 p-3 bg-gray-100 rounded">
+      <h3 className="font-medium mb-1">Gemini’s answer</h3>
+      <p>{gemAnswer}</p>
+    </div>
+  )}
+</section>
         </div>
         <div>
           <dl>
